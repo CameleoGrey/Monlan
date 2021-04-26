@@ -68,8 +68,7 @@ genPath = saveDir + genName + ".pkl"
 agentName = "best_composite"
 timeConstraint = timedelta(days=5, hours=12, minutes=0)
 
-terminal = MT5Terminal(login=50859400, server="Alpari-MT5-Demo", password="Q7P7Ly3Wi")
-#terminal = MT5Terminal(login=99999999, server="Broker-MT5-Demo", password="password")
+terminal = MT5Terminal(login=99999999, server="Broker-MT5-Demo", password="password")
 dataUpdater = SymbolDataUpdater()
 dataManager = SymbolDataManager()
 
