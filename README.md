@@ -1,5 +1,5 @@
 # Monlan
-Framework to build your own FOREX trading robot based on Deep Reinforcement Learning.
+Monlan is a framework to build your own FOREX trading robot based on Deep Reinforcement Learning.
 
 # Key features
 1) Each robot, that you'll make by this framework, will stand into long/short position until best moment to close.
