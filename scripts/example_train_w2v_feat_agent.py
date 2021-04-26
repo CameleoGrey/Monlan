@@ -19,7 +19,7 @@ priceFeatList = ["open", "close", "low", "high"]
 #energyFeatList = ["vsa_spread"]
 volumeFeatList = ["tick_volume"]
 
-#terminal = MT5Terminal()
+#terminal = MT5Terminal(login=99999999, server="Broker-MT5-Demo", password="password")
 #dataUpdater = SymbolDataUpdater("../data/raw/")
 dataManager = SymbolDataManager("../data/raw/")
 
