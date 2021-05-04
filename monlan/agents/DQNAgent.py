@@ -86,9 +86,9 @@ class DQNAgent:
     def buildConv2DModel(self):
 
         #My favorite model but the slowest
-        #model = ResnetBuilder.build_resnet_34( (1, self.state_size[0], self.state_size[1]), self.action_size, outputActivation="tanh")
+        model = ResnetBuilder.build_resnet_34( (1, self.state_size[0], self.state_size[1]), self.action_size, outputActivation="tanh")
 
-        mainInputShape = (self.state_size[0], self.state_size[1], 1)
+        """mainInputShape = (self.state_size[0], self.state_size[1], 1)
         mainInput = Input(shape=mainInputShape)
         # headModelInput = Input(shape=(self.state_size[1], self.state_size[2], 1))(headModelInput)
         # headModelInput._keras_shape = (None, headModelInput.keras_shape[2], headModelInput.keras_shape[3], headModelInput.keras_shape[4] )
@@ -108,7 +108,7 @@ class DQNAgent:
         ###############################
         headModel = Flatten()(headModel)
         headModel = Dense(self.action_size, activation="tanh")(headModel)
-        model = Model(inputs=mainInput, outputs=headModel)
+        model = Model(inputs=mainInput, outputs=headModel)"""
 
         """mainInputShape = (self.state_size[0], self.state_size[1], 1)
         mainInput = Input(shape=mainInputShape)
