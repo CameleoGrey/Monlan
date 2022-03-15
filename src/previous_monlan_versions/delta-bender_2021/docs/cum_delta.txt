@@ -1,0 +1,43 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Ankit_1618
+
+//@version=4
+study("Cumulative Volume Delta")
+
+upper_wick = close>open ? high-close : high-open
+lower_wick = close>open ? open-low : close-low
+spread = high-low
+body_length = spread - (upper_wick + lower_wick)
+
+percent_upper_wick = upper_wick/spread
+percent_lower_wick = lower_wick/spread
+percent_body_length = body_length/spread
+
+
+buying_volume = close>open ? (percent_body_length + (percent_upper_wick + percent_lower_wick)/2)*volume : ((percent_upper_wick + percent_lower_wick)/2) * volume
+selling_volume = close<open ? (percent_body_length + (percent_upper_wick + percent_lower_wick)/2)*volume : ((percent_upper_wick + percent_lower_wick)/2) * volume
+
+cumulation_length = input(14)
+cumulative_buying_volume = ema(buying_volume,cumulation_length)
+cumulative_selling_volume = ema(selling_volume,cumulation_length)
+
+fill_color = cumulative_buying_volume > cumulative_selling_volume ? color.green : cumulative_buying_volume < cumulative_selling_volume ? color.red : color.yellow
+
+pb = plot(cumulative_buying_volume, color=color.green , transp=70)
+ps = plot(cumulative_selling_volume, color=color.red , transp=70)
+
+fill(pb, ps, color = fill_color)
+
+volume_strength_wave = cumulative_buying_volume > cumulative_selling_volume ? cumulative_buying_volume : cumulative_selling_volume
+ema_volume_strength_wave = ema(volume_strength_wave , cumulation_length)
+plot(ema_volume_strength_wave, color=color.gray, transp=80)
+
+cumulative_volume_delta = cumulative_buying_volume - cumulative_selling_volume
+plot(cumulative_volume_delta, color= cumulative_volume_delta>0 ? color.green : color.red, style=plot.style_columns, transp=61)
+
+
+
+
+
+
+

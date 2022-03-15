@@ -1,0 +1,109 @@
+import torch.nn
+import torchvision.models
+
+from src.monlan.modular_agents.ResnetBuilder_pytorch import *
+import random
+import numpy as np
+from collections import deque
+from datetime import datetime
+from scipy.special import softmax
+np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
+
+class SupervisedOpener:
+    def __init__(self, name, state_size, action_size,
+                 discount_factor = 0.99,
+                 learning_rate = 0.001,
+                 epsilon = 1.0,
+                 epsilon_decay = 0.9995,
+                 epsilon_min = 0.01,
+                 batch_size = 64,
+                 train_start = 1500,
+                 memorySize = 2000):
+
+        self.name = name
+
+        self.render = False
+        self.load_model = False
+
+        self.state_size = state_size
+        self.action_size = action_size
+
+        self.discount_factor = discount_factor
+        self.learning_rate = learning_rate
+        self.epsilon = epsilon
+        self.epsilon_decay = epsilon_decay
+        self.epsilon_min = epsilon_min
+        self.batch_size = batch_size
+        self.train_start = train_start
+        self.memory = deque(maxlen=memorySize)
+        self.memorySize = memorySize
+        ##########
+        self.trainFreq = int(0.001*self.memorySize)
+        self.trainWaitStep = 0
+        ##########
+
+        ##########
+        self.hold_count = 0
+        ##########
+
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.model = None
+
+    def set_model(self, model, move_to_gpu=True):
+
+        self.model = model
+        if move_to_gpu:
+            self.model.to( self.device )
+
+    def get_name(self):
+        return self.name
+
+    def get_action(self, state):
+
+        state = state.reshape((1, 1, state.shape[1], state.shape[2]))
+        state = torch.Tensor( state ).to( self.device )
+
+        ########################################
+        # eps greed strategy
+        if np.random.rand() <= self.epsilon:
+            return random.randrange(self.action_size)
+        else:
+            with torch.no_grad():
+                start = datetime.now()
+                q_value = self.model(state).cpu().detach().numpy()
+
+                buy_threshold = 0.05
+                sell_threshold = 0.05
+                q_value[0][0] -= buy_threshold
+                q_value[0][1] -= sell_threshold
+
+                """buy_threshold = -1.0
+                sell_threshold = -1.0
+                q_value[0][0] *= buy_threshold
+                q_value[0][1] *= sell_threshold"""
+
+                q_value = np.array( [q_value[0][0], 0.0, q_value[0][1]] )
+                total = datetime.now() - start
+                chosen_action = np.argmax(q_value)
+                return chosen_action
+        #########################################
+
+    def append_sample(self, state, action, reward, next_state, done):
+        pass
+
+    def train_model(self):
+        pass
+
+    def build_model(self):
+
+        return None
+
+    def buildFlatModel(self):
+        return None
+
+    def buildConv2DModel(self):
+
+        return None
+
+    def update_target_model(self):
+        pass

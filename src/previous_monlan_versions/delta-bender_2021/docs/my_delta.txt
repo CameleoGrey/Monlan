@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © tembrozni
+
+//@version=4
+study("My Delta Div")
+
+upper_wick = close>open ? high-close : high-open
+lower_wick = close>open ? open-low : close-low
+spread = high-low
+body_length = spread - (upper_wick + lower_wick)
+
+percent_upper_wick = upper_wick/spread
+percent_lower_wick = lower_wick/spread
+percent_body_length = body_length/spread
+
+buying_volume = close>open ? (percent_body_length + (percent_upper_wick + percent_lower_wick)/2)*volume : ((percent_upper_wick + percent_lower_wick)/2) * volume
+selling_volume = close<open ? -(percent_body_length + (percent_upper_wick + percent_lower_wick)/2)*volume : -((percent_upper_wick + percent_lower_wick)/2) * volume
+
+plot(buying_volume, color= buying_volume>0 ? color.green : color.red, style=plot.style_columns, transp=61)
+plot(selling_volume, color= selling_volume>0 ? color.green : color.red, style=plot.style_columns, transp=61)
