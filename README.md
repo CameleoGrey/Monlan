@@ -22,7 +22,8 @@ analyzis, collections of feature generators, different architectures and approac
 ```
 git clone https://github.com/CameleoGrey/Monlan.git
 conda create -n monlan python=3.9
-conda activate monalan
+conda activate monlan
+pip3 install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio===0.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 pip install -r requirements.txt
 ```
 
