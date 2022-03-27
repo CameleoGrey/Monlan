@@ -49,10 +49,13 @@ class DQNAgent:
 
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = self.build_model().to( self.device )
-        #self.loss_function = torch.nn.MSELoss()
-        self.loss_function = torch.nn.SmoothL1Loss()
+        self.loss_function = torch.nn.MSELoss()
+        #self.loss_function = torch.nn.SmoothL1Loss()
+
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate, weight_decay=1e-4)
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate, momentum=0.9, weight_decay=5e-4)
+        #self.optimizer = torch.optim.RAdam(self.model.parameters(), lr=self.learning_rate, betas=(0.66, 0.999), weight_decay=1e-4)
+        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.learning_rate, weight_decay=1e-2, betas=(0.9, 0.999), amsgrad=True)
+        #self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate, momentum=0.0, weight_decay=5e-4)
 
     def get_name(self):
         return self.name
@@ -69,12 +72,18 @@ class DQNAgent:
             # action size == 3 means opener. In this version is assumed that
             # in composite agent will be used supervised opener that has
             # his own policy.
-            if self.action_size == 3:
+            """if self.action_size == 3:
                 eps_action = np.random.choice([0, 1, 2], p=[0.45, 0.10, 0.45])
-                return eps_action
+                return eps_action"""
             #####################################################
+
+
+            ####################################################
+            # greed
             q_value = self.model(state).cpu().detach().numpy()
             greed_action_id = np.argmax(q_value)
+            ####################################################
+
             return greed_action_id
 
         if len(self.memory) <= self.train_start:
@@ -88,7 +97,7 @@ class DQNAgent:
                 rand_action = np.random.choice([0, 1, 2], p=[0.33, 0.34, 0.33])
                 ################
             elif self.action_size == 2:
-                rand_action = np.random.choice([0, 1], p=[0.8, 0.2])
+                rand_action = np.random.choice([0, 1], p=[0.95, 0.05])
                 #rand_action = np.random.choice([0, 1], p=[0.5, 0.5])
             else:
                 raise ValueError("Broken action size")
@@ -112,10 +121,27 @@ class DQNAgent:
         #########################################
 
         if self.action_size == 3:
+
+            ####################################################################
+            # pursuit greed
+            """beta = 0.005
+            q_value = self.model(state).cpu().detach().numpy()
+            greed_action_id = np.argmax(q_value)
+            probs = softmax(q_value)
+            for i in range(len(probs)):
+                if i == greed_action_id:
+                    probs[i] = probs[i] - beta * (1.0 - probs[i])
+                else:
+                    probs[i] = probs[i] - beta * (0.0 - probs[i])
+            eps_greed_action = np.argmax(probs)"""
+            ###################################################################
+
+            ###################################################################
+            # eps greed
             if np.random.rand() <= self.epsilon:
-                #eps_action = np.random.choice([0, 1, 2], p=[0.33, 0.34, 0.33])
+                eps_action = np.random.choice([0, 1, 2], p=[0.33, 0.34, 0.33])
                 #########################
-                eps_action = np.random.choice([0, 1, 2], p=[0.45, 0.10, 0.45])
+                #eps_action = np.random.choice([0, 1, 2], p=[0.45, 0.10, 0.45])
                 #########################
                 return eps_action
             else:
@@ -123,8 +149,11 @@ class DQNAgent:
                 eps_greed_action = np.argmax(q_value)
 
                 return eps_greed_action
+            ####################################################################
+
         else:
-            beta = 0.001
+            # pursuit greed
+            beta = 0.05
             q_value = self.model(state).cpu().detach().numpy()
             greed_action_id = np.argmax(q_value)
             probs = softmax(q_value)
@@ -136,69 +165,24 @@ class DQNAgent:
             pursuit_greed_action = np.argmax(probs)
 
 
-            ##############################
-            # trying to prevent hold overfit
-            if pursuit_greed_action == 0:
-                self.hold_count += 1
-            if self.hold_count == 10:
-                self.hold_count = 0
-                pursuit_greed_action = 1
-            ##############################
-
-            return pursuit_greed_action
-
-
-        #########
-        # my original pursuit version of exploration/exploitation
-        """start = datetime.now()
-        q_value = self.model(state).cpu().detach().numpy()
-        total = datetime.now() - start
-        greed_action_id = np.argmax(q_value)
-        if self.epsilon == 0.0:
-            return greed_action_id
-
-        probs = softmax(q_value)
-        if self.action_size == 3:
-            hold_beta = 0.05
-            deal_beta = 0.05
-            for i in range(len(probs)):
-                if i == 1:
-                    probs[i] = probs[i] + hold_beta * ( 0.5 - probs[i] )
-                elif i == greed_action_id:
-                    probs[i] = probs[i] - deal_beta * ( 1.0 - probs[i] )
-                else:
-                    probs[i] = probs[i] - deal_beta * ( 0.0 - probs[i] )
-            pursuit_greed_action = np.argmax(probs)
-
-            ##############################
-            # trying to prevent hold overfit
-            if pursuit_greed_action == 1:
-                self.hold_count += 1
-            if self.hold_count == 10:
-                self.hold_count = 0
-                pursuit_greed_action = np.random.choice([0, 1, 2], p=[0.5, 0.0, 0.5])
-            ##############################
-
-            return pursuit_greed_action
-        else:
-            beta = 0.05
-            for i in range(len(probs)):
-                if i == greed_action_id:
-                    probs[i] = probs[i] - beta * ( 1.0 - probs[i] )
-                else:
-                    probs[i] = probs[i] - beta * ( 0.0 - probs[i] )
-            pursuit_greed_action = np.argmax(probs)
+            # eps greed
+            """if np.random.rand() <= self.epsilon:
+                pursuit_greed_action = np.random.choice([0, 1], p=[0.95, 0.05])
+                # pursuit_greed_action = np.random.choice([0, 1], p=[0.5, 0.5])
+            else:
+                q_value = self.model(state).cpu().detach().numpy()
+                pursuit_greed_action = np.argmax(q_value)"""
 
             ##############################
             # trying to prevent hold overfit
             if pursuit_greed_action == 0:
                 self.hold_count += 1
-            if self.hold_count == 20:
+            if self.hold_count >= 40:
                 self.hold_count = 0
                 pursuit_greed_action = 1
             ##############################
 
-            return pursuit_greed_action"""
+            return pursuit_greed_action
 
     def append_sample(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -270,14 +254,16 @@ class DQNAgent:
 
     def build_conv_2d_model(self):
 
-        #model = torchvision.models.resnet18(pretrained=False, progress=True, num_classes=self.action_size)
-        model = models.resnet34(pretrained=False, progress=True, num_classes=self.action_size)
+        model = models.resnet18(pretrained=False, progress=True, num_classes=self.action_size)
+        #model = models.resnet34(pretrained=False, progress=True, num_classes=self.action_size)
+        #model = models.resnext50_32x4d(pretrained=False, progress=True, num_classes=self.action_size)
+        #model = models.wide_resnet50_2(pretrained=False, progress=True, num_classes=self.action_size)
         model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
 
-        model = nn.Sequential(
-            model,
-            nn.Tanh()
-        )
+        #model = nn.Sequential(
+        #    model,
+        #    nn.Tanh()
+        #)
 
         return model
 

@@ -53,7 +53,7 @@ composite_env = CompositeEnv(test_df, opener_feat_gen, buyer_feat_gen, seller_fe
                              stoploss_puncts=2000, takeprofit_puncts=2000, risk_points=110, risk_levels=5, parallel_opener=False,
                              render_dir="../../data/pictures", render_name="test_plot", env_name="test_env", turn_off_spread=False)
 seller_env = composite_env.state_dict["seller"]
-agent = load( os.path.join("../../models/", "composite_agent_6.pkl"))
+agent = load( os.path.join("../../models/", "composite_agent_1.pkl"))
 seller_agent = agent.agents["seller"]
 seller_agent.epsilon = 0.0
 

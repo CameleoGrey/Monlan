@@ -24,7 +24,8 @@ seller_y = seller_samples["y"]
 
 common_x = []
 common_y = []
-for i in tqdm(range(len(buyer_steps)), desc="Building common dataset"):
+min_dataset_len = min( len(buyer_steps), len(seller_steps) )
+for i in tqdm(range(min_dataset_len), desc="Building common dataset"):
     if buyer_steps[i] != seller_steps[i]:
         raise ValueError("Different step_i")
     if buyer_x[i][0][0][0][0] != seller_x[i][0][0][0][0]:

@@ -55,7 +55,7 @@ composite_env = CompositeEnv(test_df, opener_price_diff_generator, buyer_feat_ge
                        render_dir="../../data/pictures", render_name="test_plot", env_name="test_env", turn_off_spread=False)
 buyer_env = composite_env.state_dict["buyer"]
 
-agent = load( os.path.join("../../models/", "composite_agent_6.pkl"))
+agent = load( os.path.join("../../models/", "composite_agent_1.pkl"))
 buyer_agent = agent.agents["buyer"]
 buyer_agent.epsilon = 0.0
 

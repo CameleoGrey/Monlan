@@ -59,10 +59,10 @@ test_env = CompositeEnv(test_df, opener_price_diff_generator, buyer_price_diff_g
                        render_dir="../../data/pictures", render_name="test_plot", env_name="test_env", turn_off_spread=False)
 
 scores = []
-for i in range( 0, 10 ):
+for i in range( 10 ):
     agent = load( os.path.join("../../models/", "composite_agent_{}.pkl".format(i)))
     agent_scores = []
-    for j in range( 5 ):
+    for j in range( 10 ):
         score, deals_statistics = agent.use_agent(test_env, render_deals=False)
         median_deal = np.median( deals_statistics )
         agent_scores.append( median_deal )

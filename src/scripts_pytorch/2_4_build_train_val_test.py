@@ -42,6 +42,16 @@ y = y[ np.abs(y[:, 1]) > 0.1  ]"""
 train_x, test_x, train_y, test_y = train_test_split( x, y, shuffle=False, test_size=0.1, random_state=45 )
 train_x, val_x, train_y, val_y = train_test_split( train_x, train_y, shuffle=False, test_size=0.1, random_state=46 )
 
+#######################
+"""for i in range(2):
+    train_x = np.concatenate([train_x, train_x], axis=2)
+    test_x = np.concatenate([test_x, test_x], axis=2)
+    val_x = np.concatenate([val_x, val_x], axis=2)
+train_x = np.concatenate( [train_x, train_x, train_x], axis=1 )
+test_x = np.concatenate( [test_x, test_x, test_x], axis=1 )
+val_x = np.concatenate( [val_x, val_x, val_x], axis=1 )"""
+#######################
+
 train_dataset = {"x": train_x, "y": train_y}
 val_dataset = {"x": val_x, "y": val_y}
 test_dataset = {"x": test_x, "y": test_y}

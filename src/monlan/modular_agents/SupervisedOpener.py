@@ -70,7 +70,7 @@ class SupervisedOpener:
             with torch.no_grad():
                 start = datetime.now()
                 q_value = self.model(state).cpu().detach().numpy()
-                hold_q_value = 0.05
+                hold_q_value = 0.03
 
                 """buy_threshold = 0.05
                 sell_threshold = 0.05

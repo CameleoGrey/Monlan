@@ -51,7 +51,7 @@ buyer_price_diff_generator = FeatGen_ScaledWindow(feat_list, n_points=256, flat_
 seller_price_diff_generator = FeatGen_ScaledWindow(feat_list, n_points=256, flat_stack=False)
 
 reward_transformer = RewardTransformer()
-reward_transformer.fit(df, spread_coef=0.00001, lot_coef=100000, lot_size=0.1, window_width=20)
+reward_transformer.fit(df, spread_coef=0.00001, lot_coef=100000, lot_size=0.1, window_width=40)
 save(reward_transformer, path=os.path.join("../../models/reward_transformer.pkl"))
 reward_transformer = load( os.path.join("../../models/reward_transformer.pkl") )
 
@@ -60,7 +60,7 @@ train_env = CompositeEnv(train_df, opener_price_diff_generator, buyer_price_diff
                         start_deposit=300, lot_size=0.1, lot_coef=100000, spread=18, spread_coef=0.00001,
                         stop_type="const", take_type="const", stop_pos=2, take_pos=1, max_loss=20000, max_take=20000,
                         stoploss_puncts=2000, takeprofit_puncts=2000, risk_points=110, risk_levels=5, parallel_opener=False,
-                        render_flag=True, render_dir="../../data/pictures", render_name="train_plot", env_name="train_env", turn_off_spread=True)
+                        render_flag=True, render_dir="../../data/pictures", render_name="train_plot", env_name="train_env", turn_off_spread=False)
 
 back_test_df = mod_df.tail(380000).head(40000)
 back_test_env = CompositeEnv(back_test_df, opener_price_diff_generator, buyer_price_diff_generator, seller_price_diff_generator,
@@ -71,17 +71,17 @@ back_test_env = CompositeEnv(back_test_df, opener_price_diff_generator, buyer_pr
 
 # get size of state and action from environment
 opener_agent = DQNAgent( "opener", train_env.observation_space["opener"], train_env.action_space["opener"].n,
-                           memory_size=40000, batch_size=1, train_start=30000, epsilon_min=0.99, epsilon=1, discount_factor=0.0,
+                           memory_size=75000, batch_size=16, train_start=25000, epsilon_min=0.99, epsilon=1, discount_factor=0.0,
                            epsilon_decay=0.9999, learning_rate=0.0001)
 buyer_agent = DQNAgent( "buyer", train_env.observation_space["buyer"], train_env.action_space["buyer"].n,
-                          memory_size=40000, batch_size=16, train_start=30000, epsilon_min=0.1, epsilon=1, discount_factor=0.999,
+                          memory_size=250000, batch_size=16, train_start=100000, epsilon_min=0.05, epsilon=1, discount_factor=0.97,
                           epsilon_decay=0.9999, learning_rate=0.0001)
 seller_agent = DQNAgent( "seller", train_env.observation_space["seller"], train_env.action_space["seller"].n,
-                           memory_size=40000, batch_size=16, train_start=30000, epsilon_min=0.1, epsilon=1, discount_factor=0.999,
+                           memory_size=250000, batch_size=16, train_start=100000, epsilon_min=0.05, epsilon=1, discount_factor=0.97,
                            epsilon_decay=0.9999, learning_rate=0.0001)
 
 agent = CompositeAgent(opener_agent, buyer_agent, seller_agent, reward_transformer=reward_transformer)
-agent.fit_agent(env=train_env, back_test_env=back_test_env, n_episodes=100, n_warm_up=0,
+agent.fit_agent(env=train_env, back_test_env=back_test_env, n_episodes=10, n_warm_up=0,
                 uniform_eps=False, syn_eps=False, plot_scores=False,
                 save_best=False, save_freq=1, save_dir="../../models/", save_name="composite_agent")
 
@@ -97,6 +97,7 @@ buyer_price_diff_generator = FeatGen_ScaledWindow(feat_list, n_points=256, flat_
 seller_price_diff_generator = FeatGen_ScaledWindow(feat_list, n_points=256, flat_stack=False)
 
 test_df = mod_df.tail(380000).tail(40000)
+#test_df = mod_df.tail(380000).head(40000)
 #back_test_df = modDf.head(50000).tail(3192).head(1192)
 test_env = CompositeEnv(test_df, opener_price_diff_generator, buyer_price_diff_generator, seller_price_diff_generator,
                            start_deposit=300, lot_size=0.1, lot_coef=100000, spread=18, spread_coef=0.00001,
