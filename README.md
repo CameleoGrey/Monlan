@@ -35,11 +35,11 @@ on a modern laptop (64 Gb DDR4 RAM, i7-11800H, RTX3060 6Gb). To complete the who
 
 # Example of results on train data subsample
 
-![](naive_resnet_18_closer_0_16_train_subsample_73000.png)
+![](resnet_18_naive_opener_0_16_train_subsample_73000.png)
 
 # Example of results on test data subsample
 
-![](naive_resnet_18_closer_0_16_test_subsample_73000.png)
+![](resnet_18_naive_opener_0_16_test_subsample_73000.png)
 
 # Installation
 
