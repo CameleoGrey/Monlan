@@ -54,7 +54,7 @@ pip install -r requirements.txt
 # Some thoughts
 
 I started developing Monlan in May 2019.
-After that, I continued my research until June 2022 and created many versions of Monlan,
+After that, I continued my research until July 2022 and created many versions of Monlan,
 but did not achieve positive results on test ("future") data. I really tried to build a profitable robot. 
 There was everything: thousands of experiments, 3-4 depressions, loss of money. While I was working on robots, I learned how to trade without 
 them, with my hands (it turned out I was doing pretty well, but it turned out to be too boring for me, so I 
