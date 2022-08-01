@@ -35,9 +35,13 @@ on a modern laptop (64 Gb DDR4 RAM, i7-11800H, RTX3060 6Gb). To complete the who
 
 # Example of results on train data subsample
 
+(download the image below to see details better)
+
 ![](resnet_18_naive_opener_0_16_train_subsample_73000.png)
 
 # Example of results on test data subsample
+
+(download the image below to see details better)
 
 ![](resnet_18_naive_opener_0_16_test_subsample_73000.png)
 
