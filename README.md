@@ -1,6 +1,6 @@
 # Monlan
-Monlan is a collection of my Reinforcement Learning experiments (2019-2022) 
-in the field of algorithmic trading. The main idea was to build composite agent which
+Monlan is a collection of my Data Science (including Reinforcement Learning) experiments (2019-2022) in the field of algorithmic trading. 
+The main idea was to build composite agent which
 consists of independent special agents: special opener agent, which analyzes situation for
 opening buy or sell deal or do nothing (hold position, wait better situation for opening), and special
 buy and sell agents, which know better, when to hold or close position. When opener choose
@@ -13,9 +13,33 @@ Previous versions in the corresponding folder contain a lot of intresting ideas 
 which may be useful for you (integrations with trading terminal, risk management agent, price level
 analyzis, collections of feature generators, different architectures and approaches).
 
-# Example of render
+# The main idea of the current version (Big Supervised)
 
-![](example_test_plot.png)
+The main idea of Big Supervised Monlan is generating stochastic 
+value estimation for each history step. Then there's training a model that 
+predicts values for buy and sell. Based on this model we're building 
+mirror closer: if it plays the role of a buyer, then its hold action value estimates 
+as buyer value prediction and close action value estimates as sell value prediction. 
+(A mirror closer in the role of buyer holds position while it is more profitable
+than close and switch to the seller.) 
+Then a trained mirror closer is using for generating real performance estimation 
+for an opener in each history point of a training data. Then we add 
+hold estimates to these targets and train an opener. It is important because 
+no one can trade profitable without the ability to wait a good moment to open a deal. 
+After that we combine the trained opener and the mirror closer into one 
+CompositeAgent that is testing on a test data in the last script. 
+This idea came from experiments with pure RL and distilled agents. 
+This method combined with on-fly training sample generation makes 
+it possible to perform relatively fast and effective training of an agent on a big data (millions of history samples) 
+on a modern laptop (64 Gb DDR4 RAM, i7-11800H, RTX3060 6Gb). To complete the whole pipeline from scratch one needs ~5-7 days. 
+
+# Example of results on train data subsample
+
+![](naive_resnet_18_closer_0_16_train_subsample_73000.png)
+
+# Example of results on test data subsample
+
+![](naive_resnet_18_closer_0_16_test_subsample_73000.png)
 
 # Installation
 
@@ -30,7 +54,7 @@ pip install -r requirements.txt
 # Some thoughts
 
 I started developing Monlan in May 2019.
-After that, I continued my research until February 2022 and created many versions of Monlan,
+After that, I continued my research until June 2022 and created many versions of Monlan,
 but did not achieve positive results on test ("future") data. I really tried to build a profitable robot. 
 There was everything: thousands of experiments, 3-4 depressions, loss of money. While I was working on robots, I learned how to trade without 
 them, with my hands (it turned out I was doing pretty well, but it turned out to be too boring for me, so I 
