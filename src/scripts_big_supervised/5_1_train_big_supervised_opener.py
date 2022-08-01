@@ -24,7 +24,7 @@ if __name__ == "__main__":
         base_sample_generator.remake_history_step_target_mapping()
         base_sample_generators.append( base_sample_generator )
     sample_generator = MetaOnFlySupervisedSampleGenerator(base_sample_generators)
-    sample_generator.show_plots( reward_line_plot=True, reward_dist_plot=True )
+    #sample_generator.show_plots( reward_line_plot=True, reward_dist_plot=True )
 
     big_supervised_closer = BigSupervisedTCNMirrorOpener(input_size=7)
     # Current realization's using pytorch DataLoader which creates new process for parallelization of
