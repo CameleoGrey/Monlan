@@ -51,24 +51,6 @@ pip3 install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio===0.11.0+c
 pip install -r requirements.txt
 ```
 
-# Some thoughts
-
-I started developing Monlan in May 2019.
-After that, I continued my research until July 2022 and created many versions of Monlan,
-but did not achieve positive results on test ("future") data. I really tried to build a profitable robot. 
-There was everything: thousands of experiments, 3-4 depressions, loss of money. While I was working on robots, I learned how to trade without 
-them, with my hands (it turned out I was doing pretty well, but it turned out to be too boring for me, so I 
-continued to build robots). Please, if you are just starting with
-algorithmic trading, do not continue, do not waste your precious time. If you want to earn money, it's much 
-easier to do it at a regular job in a company. Trading is a pseudoscientific field where works: 
-arbitrage (prohibited by every broker), short-term scalping (available only for large
-companies), medium-term hand trading based on macroeconomic analysis, where technical
-analysis plays only a supporting role (requires a lot of time for training, talent and does not guarantee huge profits).
-Spending time creating trading bots was one of my biggest failures because I spent 3 years on
-an unsolvable task. If you want to understand the difference between scientific and
-pseudoscientific tasks, look for the concepts of "holism" and "atomism" in the methodology of science. 
-Real science is based on atomism, not holism. Forecasting the future price based on the price in the past in isolation from understanding the economic situation is holism.
-
 # Note
 Remember: when starting to work in the financial markets, make sure that 
 you are aware of the risks associated with trading with leverage, and that 
